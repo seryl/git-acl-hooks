@@ -2,6 +2,7 @@ Git ACL Hooks
 =============
 
 Sets access control restrictions for updates.
+
 Example acl
 ===========
     # Everything is read-only by default
