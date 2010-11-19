@@ -1,0 +1,5 @@
+[read-only access to blehk.txt]
+match = ^blehk.txt
+access = read-only
+users = jtoft
+
