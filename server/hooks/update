@@ -2,7 +2,10 @@
 require 'AccessControl'
 
 def check_directory_perms(oldrev, newrev, access, user)
-  new_commits = `git rev-list #{oldrev}..#{newrev}`.split("\n")
+  if oldrev.nil?
+      new_commits = `git rev-list #{newrev}`.split("\n")
+  else
+      new_commits = `git rev-list #{oldrev}..#{newrev}`.split("\n")
   new_commits.each do |rev|
     files_modified = `git log -1 --name-only --pretty=format:'' #{rev}`\
       .split("\n")
