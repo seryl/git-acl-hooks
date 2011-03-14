@@ -3,39 +3,40 @@ require 'AccessControl'
 
 def check_directory_perms(oldrev, newrev, access, user)
   if oldrev.nil?
-      new_commits = `git rev-list #{newrev}`.split("\n")
+    new_commits = `git rev-list #{newrev}`.split("\n")
   else
-      new_commits = `git rev-list #{oldrev}..#{newrev}`.split("\n")
-  new_commits.each do |rev|
-    files_modified = `git log -1 --name-only --pretty=format:'' #{rev}`\
-      .split("\n")
+    new_commits = `git rev-list #{oldrev}..#{newrev}`.split("\n")
+    new_commits.each do |rev|
+      files_modified = `git log -1 --name-only --pretty=format:'' #{rev}`\
+.split("\n")
 
-    files_modified.each do |path|
-      next if path.size == 0
-      has_file_access = false
+      files_modified.each do |path|
+        next if path.size == 0
+        has_file_access = false
 
-      access.sort.each do |access_path, info|
-        is_match = path =~ info["regex"]
-        if is_match
-          if info.key? "read-only"
-            if info["read-only"].include?('*') or\
+        access.sort.each do |access_path, info|
+          is_match = path =~ info["regex"]
+          if is_match
+            if info.key? "read-only"
+              if info["read-only"].include?('*') or\
               info["read-only"].include?(user)
-              # pass for now
+                # pass for now
+              end
             end
-          end
 
-          if info.key? "read-write"
-            if info["read-write"].include?('*') or\
+            if info.key? "read-write"
+              if info["read-write"].include?('*') or\
               info["read-write"].include?(user)
-              has_file_access = true
+                has_file_access = true
+              end
             end
           end
         end
-      end
 
-      if !has_file_access
-        puts "[POLICY] You do not have access to push to #{path}"
-        exit 1
+        if !has_file_access
+          puts "[POLICY] You do not have access to push to #{path}"
+          exit 1
+        end
       end
     end
   end
@@ -43,7 +44,7 @@ end
 
 def start(refname, oldrev, newrev, user)
   puts "Enforcing Policies..."
-  puts "(#{refname}) (#{oldrev[0,6]}) (#{newrev[0,6]})"
+  puts "(#{refname}) (#{oldrev[0, 6]}) (#{newrev[0, 6]})"
   acl_map = create_acl_map("./acl")
   check_directory_perms(oldrev, newrev, acl_map, user)
 end
