@@ -8,7 +8,7 @@ def check_directory_perms(oldrev, newrev, access, user)
     new_commits = `git rev-list #{oldrev}..#{newrev}`.split("\n")
     new_commits.each do |rev|
       files_modified = `git log -1 --name-only --pretty=format:'' #{rev}`\
-.split("\n")
+        .split("\n")
 
       files_modified.each do |path|
         next if path.size == 0
